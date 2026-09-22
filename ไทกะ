@@ -1,0 +1,1092 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>ผู้ช่วย ไทกะ อาคุโมะ - Taika Akumo Assistant System</title>
+    <link href="https://fonts.googleapis.com/css2?family=Mitr:wght@400;600;700&family=Orbitron:wght@800;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-black: #08080c;
+            --panel-dark: #12131c;
+            --neon-pink: #ff007f;
+            --neon-green: #00ff66;
+            --neon-cyan: #00f0ff;
+            --neon-yellow: #ffee00;
+            --text-gray: #a0a5c0;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Mitr', sans-serif;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background-color: #030305;
+            color: #fff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background-image: 
+                radial-gradient(circle at 50% 0%, rgba(255, 0, 127, 0.25), transparent 70%),
+                radial-gradient(circle at 50% 100%, rgba(0, 255, 102, 0.15), transparent 70%);
+        }
+
+        /* App Frame */
+        .app-container {
+            width: 100%;
+            max-width: 480px;
+            height: 100vh;
+            max-height: 900px;
+            background: var(--bg-black);
+            border: 4px solid var(--neon-pink);
+            box-shadow: 0 0 30px rgba(255, 0, 127, 0.4), inset 0 0 15px rgba(0, 255, 102, 0.1);
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            overflow: hidden;
+            border-radius: 20px;
+        }
+
+        @media (max-width: 500px) {
+            .app-container {
+                max-width: 100%;
+                height: 100vh;
+                max-height: none;
+                border: none;
+                border-radius: 0;
+            }
+        }
+
+        /* Top Header */
+        .app-header {
+            background: linear-gradient(180deg, #2a001a, var(--panel-dark));
+            padding: 12px 15px;
+            border-bottom: 3px solid var(--neon-pink);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 10;
+        }
+
+        .header-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.9rem;
+            font-weight: 900;
+            color: var(--neon-green);
+            text-shadow: 2px 2px 0 #000;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .header-avatar-mini {
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            border: 2px solid var(--neon-pink);
+            object-fit: cover;
+            background-color: #2a001a;
+        }
+
+        .header-btns {
+            display: flex;
+            gap: 8px;
+        }
+
+        .icon-btn {
+            background: #1a1c29;
+            border: 2px solid var(--neon-green);
+            color: var(--neon-green);
+            width: 38px;
+            height: 38px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.1rem;
+            cursor: pointer;
+            box-shadow: 2px 2px 0 #000;
+            transition: 0.1s;
+        }
+
+        .icon-btn:active {
+            transform: translate(2px, 2px);
+            box-shadow: none;
+        }
+
+        /* Main Screen Body */
+        .app-body {
+            flex: 1;
+            overflow-y: auto;
+            padding: 15px;
+            padding-bottom: 90px;
+        }
+
+        .screen-view {
+            display: none;
+            animation: fadeIn 0.2s ease-in-out;
+        }
+
+        .screen-view.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Start Screen Overlay */
+        #start-screen {
+            position: absolute;
+            inset: 0;
+            background: var(--bg-black);
+            z-index: 100;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 25px;
+            text-align: center;
+        }
+
+        .start-banner {
+            width: 100%;
+            height: 250px;
+            border-radius: 15px;
+            border: 3px solid var(--neon-pink);
+            box-shadow: 0 0 25px rgba(255, 0, 127, 0.6);
+            margin-bottom: 20px;
+            object-fit: cover;
+            background-color: #1a0011;
+        }
+
+        #start-screen h1 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.5rem;
+            color: #fff;
+            text-shadow: 3px 3px 0 var(--neon-pink), -2px -2px 0 var(--neon-green);
+            margin-bottom: 5px;
+        }
+
+        .btn-start {
+            margin-top: 20px;
+            background: var(--neon-pink);
+            color: #fff;
+            border: 3px solid #000;
+            padding: 14px 40px;
+            font-size: 1.2rem;
+            font-weight: 900;
+            border-radius: 12px;
+            box-shadow: 5px 5px 0 var(--neon-green);
+            cursor: pointer;
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        /* Mascot Box */
+        .mascot-card {
+            background: var(--panel-dark);
+            border: 3px solid var(--neon-pink);
+            border-radius: 15px;
+            padding: 12px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 15px;
+            box-shadow: 4px 4px 0 var(--neon-green);
+        }
+
+        .mascot-img {
+            width: 65px;
+            height: 65px;
+            border: 2px solid var(--neon-green);
+            border-radius: 50%;
+            object-fit: cover;
+            flex-shrink: 0;
+            box-shadow: 0 0 10px rgba(0, 255, 102, 0.5);
+            background-color: #2a001a;
+        }
+
+        .mascot-talk {
+            font-size: 0.85rem;
+            color: #fff;
+            font-weight: 600;
+            line-height: 1.35;
+        }
+
+        /* User Level Card */
+        .user-level-card {
+            background: #181a26;
+            border: 2px solid #2d324d;
+            border-radius: 12px;
+            padding: 12px;
+            margin-bottom: 15px;
+        }
+
+        .level-header {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.85rem;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+
+        .level-title { color: var(--neon-cyan); }
+        .level-rank { color: var(--neon-yellow); }
+
+        /* Game Cards & Inputs */
+        .game-card {
+            background: var(--panel-dark);
+            border: 2px solid #2a2e45;
+            border-left: 5px solid var(--neon-pink);
+            border-radius: 12px;
+            padding: 15px;
+            margin-bottom: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+            position: relative;
+        }
+
+        .card-label {
+            font-size: 0.8rem;
+            color: var(--text-gray);
+            text-transform: uppercase;
+        }
+
+        .card-val {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.6rem;
+            font-weight: 900;
+            color: #fff;
+            margin-top: 2px;
+        }
+
+        /* Form Controls */
+        .form-group {
+            margin-bottom: 12px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 0.85rem;
+            color: var(--neon-cyan);
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        input, select, textarea {
+            width: 100%;
+            padding: 10px 12px;
+            background: #000;
+            border: 2px solid #2e334d;
+            border-radius: 8px;
+            color: var(--neon-green);
+            font-weight: 700;
+            font-size: 0.95rem;
+            outline: none;
+        }
+
+        input:focus, select:focus, textarea:focus {
+            border-color: var(--neon-pink);
+            box-shadow: 0 0 8px rgba(255, 0, 127, 0.4);
+        }
+
+        /* Action Button */
+        .btn-action {
+            width: 100%;
+            background: var(--neon-pink);
+            color: #fff;
+            border: 2px solid #000;
+            padding: 12px;
+            font-size: 1rem;
+            font-weight: 900;
+            border-radius: 10px;
+            cursor: pointer;
+            box-shadow: 3px 3px 0 var(--neon-green);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 8px;
+            margin-top: 10px;
+        }
+
+        .btn-action:active {
+            transform: translate(2px, 2px);
+            box-shadow: none;
+        }
+
+        .btn-action.green {
+            background: var(--neon-green);
+            color: #000;
+            box-shadow: 3px 3px 0 var(--neon-pink);
+        }
+
+        .btn-small-edit {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            background: #1d2136;
+            border: 1px solid var(--neon-cyan);
+            color: var(--neon-cyan);
+            padding: 4px 8px;
+            font-size: 0.75rem;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 700;
+        }
+
+        /* Chat System UI */
+        .chat-box {
+            display: flex;
+            flex-direction: column;
+            height: 380px;
+            background: #0a0b12;
+            border: 2px solid var(--neon-pink);
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .chat-messages {
+            flex: 1;
+            padding: 12px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .msg-bubble {
+            max-width: 82%;
+            padding: 10px 14px;
+            border-radius: 12px;
+            font-size: 0.85rem;
+            line-height: 1.4;
+        }
+
+        .msg-akumo {
+            background: #1e1326;
+            border: 1px solid var(--neon-pink);
+            color: #fff;
+            align-self: flex-start;
+            border-bottom-left-radius: 2px;
+        }
+
+        .msg-user {
+            background: #0d281e;
+            border: 1px solid var(--neon-green);
+            color: var(--neon-green);
+            align-self: flex-end;
+            border-bottom-right-radius: 2px;
+        }
+
+        .msg-name {
+            font-weight: 700;
+            font-size: 0.75rem;
+            color: var(--neon-pink);
+            margin-bottom: 4px;
+        }
+
+        .chat-input-area {
+            display: flex;
+            gap: 6px;
+            padding: 8px;
+            background: #12131c;
+            border-top: 1px solid #282d45;
+        }
+
+        /* Bottom Navigation Bar */
+        .bottom-nav {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 70px;
+            background: #0c0d14;
+            border-top: 3px solid var(--neon-pink);
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            z-index: 20;
+        }
+
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 3px;
+            color: var(--text-gray);
+            font-size: 0.65rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: 0.2s;
+            width: 20%;
+        }
+
+        .nav-item .nav-icon {
+            font-size: 1.3rem;
+        }
+
+        .nav-item.active {
+            color: var(--neon-pink);
+            transform: translateY(-3px);
+        }
+
+        .nav-item.active .nav-icon {
+            filter: drop-shadow(0 0 5px var(--neon-pink));
+        }
+
+        /* Modals */
+        .modal-overlay {
+            position: absolute;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.85);
+            backdrop-filter: blur(4px);
+            z-index: 200;
+            display: none;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .modal-overlay.open {
+            display: flex;
+        }
+
+        .modal-content {
+            background: var(--panel-dark);
+            border: 3px solid var(--neon-cyan);
+            border-radius: 15px;
+            padding: 20px;
+            width: 100%;
+            max-height: 85vh;
+            overflow-y: auto;
+            box-shadow: 0 0 25px rgba(0, 240, 255, 0.3);
+            position: relative;
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            background: #000;
+            border: 2px solid var(--neon-pink);
+            color: var(--neon-pink);
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 900;
+            cursor: pointer;
+        }
+
+        /* Calculator */
+        .calc-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 8px;
+            margin-top: 15px;
+        }
+
+        .calc-screen {
+            width: 100%;
+            height: 50px;
+            background: #000;
+            border: 2px solid var(--neon-green);
+            color: var(--neon-green);
+            font-family: 'Orbitron', monospace;
+            font-size: 1.5rem;
+            text-align: right;
+            padding: 10px;
+            border-radius: 8px;
+        }
+
+        .calc-key {
+            background: #181a28;
+            border: 1px solid #333854;
+            color: #fff;
+            font-weight: 700;
+            font-size: 1.1rem;
+            padding: 12px;
+            border-radius: 8px;
+            cursor: pointer;
+            text-align: center;
+        }
+
+        .calc-key:active { background: var(--neon-pink); }
+        .calc-key.op { color: var(--neon-cyan); }
+        .calc-key.eq { background: var(--neon-green); color: #000; grid-column: span 2; font-weight: 900; }
+
+        .list-item {
+            background: #161824;
+            border: 1px solid #282d45;
+            border-radius: 8px;
+            padding: 10px 12px;
+            margin-bottom: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="app-container">
+        <!-- START SCREEN OVERLAY WITH TAIKA AKUMO IMAGE -->
+        <div id="start-screen">
+            <img src="https://i.ibb.co/QjTD7mG0/IMG-3495.jpg" alt="Taika Akumo" class="start-banner" onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1578632767115-351597cf2477?w=500';">
+            <h1>タイガ アクモ</h1>
+            <p style="color: var(--neon-green); font-weight: 700; font-size:0.9rem;">( ไทกะ อาคุโมะ ASSISTANT )</p>
+            <p style="color: var(--text-gray); font-size: 0.8rem; margin-top: 8px;">ผู้ช่วยการเงินทรงเจ๊สุดเซ็กซี่ พร้อมรับใช้นายท่านแล้วค่ะ~ ♥</p>
+            <button class="btn-start" onclick="startGame()">ENTER SYSTEM 💋</button>
+        </div>
+
+        <!-- TOP GAME HEADER -->
+        <div class="app-header">
+            <div class="header-title">
+                <img src="https://i.ibb.co/QjTD7mG0/IMG-3495.jpg" alt="Akumo" class="header-avatar-mini" onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1578632767115-351597cf2477?w=100';">
+                <span>タイガ アクモ ( ไทกะ อาคุโมะ )</span>
+            </div>
+            <div class="header-btns">
+                <button class="icon-btn" onclick="openModal('modal-calc')" title="เครื่องคิดเลข">🧮</button>
+                <button class="icon-btn" onclick="openModal('modal-guide')" title="วิธีใช้งาน">❓</button>
+            </div>
+        </div>
+
+        <!-- MAIN CONTENT AREA -->
+        <div class="app-body">
+
+            <!-- SCREEN 1: HOME HUD DASHBOARD -->
+            <div id="screen-home" class="screen-view active">
+                <div class="mascot-card">
+                    <img src="https://i.ibb.co/QjTD7mG0/IMG-3495.jpg" alt="Taika Akumo Mascot" class="mascot-img" onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1578632767115-351597cf2477?w=100';">
+                    <div class="mascot-talk" id="mascot-text">
+                        "ยินดีต้อนรับนะคะ นายท่าน~ ♥ วันนี้มีเรื่องเงินอะไรอยากให้เจ๊ช่วยดูแลไหมคะ?"
+                    </div>
+                </div>
+
+                <div class="user-level-card">
+                    <div class="level-header">
+                        <span class="level-title">สถานะนายท่าน</span>
+                        <span class="level-rank" id="user-rank">LV.1 นักสะสมเงินทอง</span>
+                    </div>
+                    <div style="background: #000; height: 8px; border-radius: 4px; overflow: hidden; margin-top: 5px;">
+                        <div id="level-bar" style="background: linear-gradient(90deg, var(--neon-pink), var(--neon-green)); height: 100%; width: 50%;"></div>
+                    </div>
+                </div>
+
+                <!-- MAIN BALANCE CARD WITH INITIAL AMOUNT EDIT -->
+                <div class="game-card" style="border-left-color: var(--neon-cyan);">
+                    <button class="btn-small-edit" onclick="openModal('modal-init-bal')">✏️ แก้ไขเงินเริ่ม</button>
+                    <div class="card-label">💰 ยอดเงินคงเหลือสุทธิ (รวมเงินตั้งต้น)</div>
+                    <div class="card-val" id="val-balance">฿0.00</div>
+                    <div style="font-size: 0.75rem; color: var(--text-gray); margin-top: 5px;">
+                        เงินตั้งต้นในบัญชี: <span id="val-init-display" style="color: var(--neon-yellow);">฿0.00</span>
+                    </div>
+                </div>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                    <div class="game-card" style="border-left-color: var(--neon-green);">
+                        <div class="card-label">🟢 รายรับรวม</div>
+                        <div class="card-val" id="val-income" style="font-size: 1.2rem; color: var(--neon-green);">฿0.00</div>
+                    </div>
+                    <div class="game-card" style="border-left-color: var(--neon-pink);">
+                        <div class="card-label">🔴 รายจ่ายรวม</div>
+                        <div class="card-val" id="val-expense" style="font-size: 1.2rem; color: var(--neon-pink);">฿0.00</div>
+                    </div>
+                </div>
+
+                <div class="game-card" style="border-left-color: var(--neon-yellow);">
+                    <div class="card-label">💀 ยอดเงินที่โดนยืมไป (ค้างชำระ)</div>
+                    <div class="card-val" id="val-debt" style="color: var(--neon-yellow);">฿0.00</div>
+                </div>
+            </div>
+
+            <!-- SCREEN 2: CHAT WITH TAIKA AKUMO -->
+            <div id="screen-chat" class="screen-view">
+                <h3 style="color: var(--neon-pink); margin-bottom: 8px; font-size: 1.05rem;">💬 ปรึกษา เจ๊ไทกะ อาคุโมะ</h3>
+                <div class="chat-box">
+                    <div class="chat-messages" id="chat-msgs">
+                        <div class="msg-bubble msg-akumo">
+                            <div class="msg-name">タイガ アクモ ( ไทกะ อาคุโมะ )</div>
+                            ยินดีต้อนรับนะคะ นายท่าน~ ♥ มีเรื่องกลุ้มใจเรื่องเงิน หรืออยากปรึกษาอะไรเจ๊ไหมคะ? พิมพ์บอกเจ๊ได้เลยน้า~
+                        </div>
+                    </div>
+                    <div class="chat-input-area">
+                        <input type="text" id="chat-input" placeholder="พิมพ์ข้อความปรึกษานายท่าน..." onkeydown="if(event.key==='Enter') sendChat()">
+                        <button class="btn-action" style="width:70px; margin:0; padding:8px; font-size:0.85rem;" onclick="sendChat()">ส่ง 💋</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SCREEN 3: RECORD TRANSACTIONS -->
+            <div id="screen-tx" class="screen-view">
+                <h3 style="color: var(--neon-pink); margin-bottom: 12px; font-size: 1.1rem;">📝 บันทึก รายรับ - รายจ่าย</h3>
+                <form id="form-tx" onsubmit="addTx(event)">
+                    <div class="form-group">
+                        <label>ประเภทรายการ</label>
+                        <select id="tx-type">
+                            <option value="income">🟢 รายรับ (เงินเข้า)</option>
+                            <option value="expense">🔴 รายจ่าย / เงินที่เสียไป</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>จำนวนเงิน (บาท)</label>
+                        <input type="number" id="tx-amount" step="0.01" placeholder="0.00" required>
+                    </div>
+                    <div class="form-group">
+                        <label>หมวดหมู่เงินที่เสีย/ได้รับ</label>
+                        <select id="tx-category">
+                            <option value="อาหาร/ขนม">ค่าอาหาร / ของกิน</option>
+                            <option value="ช้อปปิ้ง/ความบันเทิง">ช้อปปิ้ง / เกม / ความบันเทิง</option>
+                            <option value="แม่ยืมเงิน">แม่ยืมเงิน</option>
+                            <option value="ค่าเดินทาง">ค่าเดินทาง</option>
+                            <option value="ทั่วไป">ทั่วไป</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>วันที่เกิดรายการ</label>
+                        <input type="date" id="tx-date" required>
+                    </div>
+                    <div class="form-group">
+                        <label>โน้ตกันลืม</label>
+                        <input type="text" id="tx-note" placeholder="ใส่รายละเอียดเพิ่มเติม...">
+                    </div>
+                    <button type="submit" class="btn-action">💥 ยืนยันบันทึกรายการ</button>
+                </form>
+
+                <h4 style="margin-top: 20px; color: var(--neon-green); font-size: 0.95rem;">📋 ประวัติรายการล่าสุด</h4>
+                <div id="tx-list" style="margin-top: 10px;"></div>
+            </div>
+
+            <!-- SCREEN 4: DEBT TRACKER -->
+            <div id="screen-debt" class="screen-view">
+                <h3 style="color: var(--neon-yellow); margin-bottom: 12px; font-size: 1.1rem;">💀 บัญชีนับเงินยืม (แม่ยืม/คืนไม่ครบ)</h3>
+                <form id="form-debt" onsubmit="addDebt(event)">
+                    <div class="form-group">
+                        <label>ชื่อผู้ยืมเงิน</label>
+                        <input type="text" id="debt-name" value="คุณแม่" required>
+                    </div>
+                    <div class="form-group">
+                        <label>จำนวนเงินที่ยืมไป (บาท)</label>
+                        <input type="number" id="debt-total" step="0.01" placeholder="0.00" required>
+                    </div>
+                    <div class="form-group">
+                        <label>วันที่ยืมเงิน</label>
+                        <input type="date" id="debt-date" required>
+                    </div>
+                    <div class="form-group">
+                        <label>สัญญาใจ / หมายเหตุ</label>
+                        <input type="text" id="debt-note" placeholder="เช่น ยืมไปซื้อของเข้าบ้าน คืนสิ้นเดือน">
+                    </div>
+                    <button type="submit" class="btn-action green">🔥 บันทึกก้อนเงินยืม</button>
+                </form>
+
+                <h4 style="margin-top: 20px; color: var(--neon-cyan); font-size: 0.95rem;">📌 รายการเงินยืมค้างชำระ</h4>
+                <div id="debt-container" style="margin-top: 10px;"></div>
+            </div>
+
+            <!-- SCREEN 5: NOTES -->
+            <div id="screen-notes" class="screen-view">
+                <h3 style="color: var(--neon-cyan); margin-bottom: 12px; font-size: 1.1rem;">📓 สมุดโน้ต & บันทึกเตือนสติ</h3>
+                <form id="form-note" onsubmit="addNote(event)">
+                    <div class="form-group">
+                        <label>หัวข้อเรื่อง</label>
+                        <input type="text" id="note-title" placeholder="เรื่องเตือนจำ..." required>
+                    </div>
+                    <div class="form-group">
+                        <label>รายละเอียด</label>
+                        <textarea id="note-desc" rows="3" placeholder="เขียนรายละเอียด..." required></textarea>
+                    </div>
+                    <button type="submit" class="btn-action">✏️ เพิ่มบันทึก</button>
+                </form>
+
+                <div id="notes-container" style="margin-top: 15px;"></div>
+            </div>
+
+        </div>
+
+        <!-- BOTTOM NAVIGATION BAR -->
+        <div class="bottom-nav">
+            <div class="nav-item active" onclick="navTo('screen-home', this)">
+                <span class="nav-icon">🏠</span>
+                <span>หน้าแรก</span>
+            </div>
+            <div class="nav-item" onclick="navTo('screen-chat', this)">
+                <span class="nav-icon">💬</span>
+                <span>คุยกับเจ๊</span>
+            </div>
+            <div class="nav-item" onclick="navTo('screen-tx', this)">
+                <span class="nav-icon">📝</span>
+                <span>บันทึก</span>
+            </div>
+            <div class="nav-item" onclick="navTo('screen-debt', this)">
+                <span class="nav-icon">💀</span>
+                <span>เงินยืม</span>
+            </div>
+            <div class="nav-item" onclick="navTo('screen-notes', this)">
+                <span class="nav-icon">📓</span>
+                <span>โน้ต</span>
+            </div>
+        </div>
+
+        <!-- MODALS -->
+        <div id="modal-init-bal" class="modal-overlay">
+            <div class="modal-content">
+                <div class="modal-close" onclick="closeModal('modal-init-bal')">✕</div>
+                <h3 style="color: var(--neon-cyan); margin-bottom: 10px;">✏️ ตั้งค่ายอดเงินตั้งต้น</h3>
+                <p style="font-size: 0.8rem; color: var(--text-gray); margin-bottom: 12px;">กรอกจำนวนเงินที่มีอยู่จริงในบัญชีของคุณ ณ ปัจจุบัน เพื่อเริ่มคำนวณ</p>
+                <div class="form-group">
+                    <label>ยอดเงินปัจจุบันในบัญชี (บาท)</label>
+                    <input type="number" id="init-bal-input" step="0.01" placeholder="0.00">
+                </div>
+                <button onclick="saveInitBalance()" class="btn-action green">💾 บันทึกเงินตั้งต้น</button>
+            </div>
+        </div>
+
+        <div id="modal-calc" class="modal-overlay">
+            <div class="modal-content">
+                <div class="modal-close" onclick="closeModal('modal-calc')">✕</div>
+                <h3 style="color: var(--neon-cyan); text-align: center; margin-bottom: 10px;">🧮 เครื่องคิดเลขไซเบอร์</h3>
+                <input type="text" id="calc-screen" class="calc-screen" readonly value="0">
+                <div class="calc-grid">
+                    <button class="calc-key op" onclick="calcC()">C</button>
+                    <button class="calc-key op" onclick="calcDel()">⌫</button>
+                    <button class="calc-key op" onclick="calcIn('%')">%</button>
+                    <button class="calc-key op" onclick="calcIn('/')">÷</button>
+                    <button class="calc-key" onclick="calcIn('7')">7</button>
+                    <button class="calc-key" onclick="calcIn('8')">8</button>
+                    <button class="calc-key" onclick="calcIn('9')">9</button>
+                    <button class="calc-key op" onclick="calcIn('*')">×</button>
+                    <button class="calc-key" onclick="calcIn('4')">4</button>
+                    <button class="calc-key" onclick="calcIn('5')">5</button>
+                    <button class="calc-key" onclick="calcIn('6')">6</button>
+                    <button class="calc-key op" onclick="calcIn('-')">-</button>
+                    <button class="calc-key" onclick="calcIn('1')">1</button>
+                    <button class="calc-key" onclick="calcIn('2')">2</button>
+                    <button class="calc-key" onclick="calcIn('3')">3</button>
+                    <button class="calc-key op" onclick="calcIn('+')">+</button>
+                    <button class="calc-key" onclick="calcIn('0')" style="grid-column: span 2;">0</button>
+                    <button class="calc-key" onclick="calcIn('.')">.</button>
+                    <button class="calc-key eq" onclick="calcRes()">=</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="modal-guide" class="modal-overlay">
+            <div class="modal-content">
+                <div class="modal-close" onclick="closeModal('modal-guide')">✕</div>
+                <h3 style="color: var(--neon-green); margin-bottom: 10px;">❓ วิธีใช้งาน ไทกะ อาคุโมะ</h3>
+                <div style="font-size: 0.85rem; color: #ccc; line-height: 1.5;">
+                    <p><b>1. ตั้งค่าเงินตั้งต้น:</b> กดปุ่ม "✏️ แก้ไขเงินเริ่ม" เพื่อระบุยอดเงินที่มีจริงในบัญชี</p><br>
+                    <p><b>2. ปรึกษาเจ๊ (💬 คุยกับเจ๊):</b> สามารถพิมพ์คุยหรือถามคำแนะนำการเงินกับเจ๊ได้ตลอดเวลานะคะ</p><br>
+                    <p><b>3. บันทึกรายรับ-รายจ่าย (📝 บันทึก):</b> จดบันทึกทุกการใช้จ่ายพร้อมเลือกหมวดหมู่</p><br>
+                    <p><b>4. ตามเงินยืม (💀 เงินยืม):</b> ใส่ยอดเงินยืม และกดบันทึกคืนเงินทีละนิดได้จนกว่าจะครบค่ะ</p>
+                </div>
+            </div>
+        </div>
+
+        <div id="modal-pay" class="modal-overlay">
+            <div class="modal-content">
+                <div class="modal-close" onclick="closeModal('modal-pay')">✕</div>
+                <h3 style="color: var(--neon-green); margin-bottom: 10px;">💰 บันทึกการทยอยคืนเงิน</h3>
+                <input type="hidden" id="pay-debt-index">
+                <div class="form-group">
+                    <label>จำนวนเงินที่คืน (บาท)</label>
+                    <input type="number" id="pay-amt" step="0.01" placeholder="0.00" required>
+                </div>
+                <div class="form-group">
+                    <label>หมายเหตุ / โน้ต</label>
+                    <input type="text" id="pay-note" placeholder="เช่น คืนงวดแรก 500">
+                </div>
+                <button onclick="submitPay()" class="btn-action green">Confirm บันทึกยอดคืน</button>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        // Web Audio SFX
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        function sfx(f = 600) {
+            if (audioCtx.state === 'suspended') audioCtx.resume();
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.type = 'square';
+            osc.frequency.setValueAtTime(f, audioCtx.currentTime);
+            gain.gain.setValueAtTime(0.04, audioCtx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.08);
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            osc.start();
+            osc.stop(audioCtx.currentTime + 0.08);
+        }
+
+        let appData = JSON.parse(localStorage.getItem('akuno_app_db')) || {
+            initBalance: 0,
+            tx: [], 
+            debts: [], 
+            notes: []
+        };
+
+        function saveData() {
+            localStorage.setItem('akuno_app_db', JSON.stringify(appData));
+            renderApp();
+        }
+
+        document.getElementById('tx-date').valueAsDate = new Date();
+        document.getElementById('debt-date').valueAsDate = new Date();
+
+        function startGame() {
+            sfx(800);
+            document.getElementById('start-screen').style.display = 'none';
+        }
+
+        function navTo(screenId, el) {
+            sfx(500);
+            document.querySelectorAll('.screen-view').forEach(s => s.classList.remove('active'));
+            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+            document.getElementById(screenId).classList.add('active');
+            el.classList.add('active');
+        }
+
+        function openModal(id) { 
+            sfx(700); 
+            if(id === 'modal-init-bal') {
+                document.getElementById('init-bal-input').value = appData.initBalance || '';
+            }
+            document.getElementById(id).classList.add('open'); 
+        }
+        function closeModal(id) { sfx(300); document.getElementById(id).classList.remove('open'); }
+
+        function saveInitBalance() {
+            sfx(900);
+            let val = parseFloat(document.getElementById('init-bal-input').value) || 0;
+            appData.initBalance = val;
+            saveData();
+            closeModal('modal-init-bal');
+            document.getElementById('mascot-text').innerText = "ไทกะปรับยอดเงินตั้งต้นให้นายท่านเรียบร้อยแล้วนะคะ~ ♥";
+        }
+
+        // Taika Akumo Chat Responses
+        const akumoReplies = [
+            "อุ๊ย นายท่านขา~ พักนี้ใช้เงินเก่งเหมือนกันนะคะเนี่ย ให้เจ๊ช่วยวางแผนไหมคะ? ♥",
+            "ไม่ว่านายท่านจะมีปัญหาเรื่องเงินแค่ไหน เจ๊ไทกะก็พร้อมอยู่เคียงข้างเสมอนะคะ~",
+            "เงินในบัญชีตึงๆ หรือเปล่าคะนายท่าน? มาให้เจ๊ช่วยตรวจดูบันทึกหน่อยสิคะ...",
+            "รับทราบค่ะนายท่าน! เจ๊จะช่วยเฝ้าระวังไม่ให้ใครมายืมเงินนายท่านแล้วไม่คืนแน่นอนค่ะ~ ♥",
+            "ตั้งใจประหยัดเงินเพื่ออนาคตของเรา... อุ๊ย เพื่อตัวนายท่านเองสิคะ เจ๊เอาใจช่วยน้า~"
+        ];
+
+        function sendChat() {
+            let input = document.getElementById('chat-input');
+            let text = input.value.trim();
+            if(!text) return;
+
+            sfx(700);
+            let container = document.getElementById('chat-msgs');
+            
+            // User Message
+            container.innerHTML += `<div class="msg-bubble msg-user">${text}</div>`;
+            input.value = '';
+            container.scrollTop = container.scrollHeight;
+
+            // Akumo Reply Simulation
+            setTimeout(() => {
+                sfx(900);
+                let randomReply = akumoReplies[Math.floor(Math.random() * akumoReplies.length)];
+                container.innerHTML += `
+                    <div class="msg-bubble msg-akumo">
+                        <div class="msg-name">タイガ アクモ ( ไทกะ อาคุโมะ )</div>
+                        ${randomReply}
+                    </div>
+                `;
+                container.scrollTop = container.scrollHeight;
+            }, 600);
+        }
+
+        function renderApp() {
+            let inc = 0, exp = 0;
+            let txHtml = '';
+
+            appData.tx.forEach((t, i) => {
+                if (t.type === 'income') inc += Number(t.amt);
+                else exp += Number(t.amt);
+
+                txHtml += `
+                    <div class="list-item">
+                        <div>
+                            <div style="font-weight:700; color:${t.type==='income'?'var(--neon-green)':'var(--neon-pink)'}">
+                                ${t.type==='income'?'+':'-'} ฿${Number(t.amt).toLocaleString()}
+                            </div>
+                            <div style="font-size:0.75rem; color:var(--text-gray);">${t.date} | ${t.cat} ${t.note ? ' - '+t.note : ''}</div>
+                        </div>
+                        <button onclick="delTx(${i})" style="background:none; border:none; color:red; cursor:pointer;">🗑️</button>
+                    </div>
+                `;
+            });
+            document.getElementById('tx-list').innerHTML = txHtml || '<p style="color:var(--text-gray); font-size:0.85rem; text-align:center;">ยังไม่มีรายการ</p>';
+
+            let debtRemTotal = 0;
+            let debtHtml = '';
+            appData.debts.forEach((d, i) => {
+                let paid = d.pay.reduce((sum, p) => sum + Number(p.amt), 0);
+                let rem = d.amt - paid;
+                debtRemTotal += rem;
+
+                let paysHtml = d.pay.map(p => `
+                    <div style="font-size:0.75rem; color:var(--neon-green); margin-top:3px;">
+                        └ 📅 ${p.date}: คืนแล้ว ฿${Number(p.amt).toLocaleString()} (${p.note||'-'})
+                    </div>
+                `).join('');
+
+                debtHtml += `
+                    <div class="game-card" style="border-left-color:${rem>0?'var(--neon-pink)':'var(--neon-green)'};">
+                        <div style="display:flex; justify-content:space-between; align-items:center;">
+                            <span style="font-weight:700; color:#fff;">👤 ${d.name}</span>
+                            <span style="font-weight:900; color:var(--neon-pink); font-size:1.1rem;">ค้าง: ฿${rem.toLocaleString()}</span>
+                        </div>
+                        <div style="font-size:0.75rem; color:var(--text-gray); margin-top:4px;">
+                            ยืมวันที่: ${d.date} | โน้ต: ${d.note||'-'}
+                        </div>
+                        <div style="font-size:0.75rem; color:#fff; margin-top:4px;">
+                            ยอดทั้งหมด: ฿${Number(d.amt).toLocaleString()} (คืนแล้ว: ฿${paid.toLocaleString()})
+                        </div>
+                        ${paysHtml}
+                        <div style="margin-top:10px; display:flex; gap:8px;">
+                            <button onclick="openPayModal(${i})" class="btn-action green" style="padding:6px; font-size:0.8rem; margin:0;">+ คืนเงิน</button>
+                            <button onclick="delDebt(${i})" style="background:none; border:none; color:var(--text-gray); font-size:0.8rem; cursor:pointer; margin-left:auto;">🗑️ ลบ</button>
+                        </div>
+                    </div>
+                `;
+            });
+            document.getElementById('debt-container').innerHTML = debtHtml || '<p style="color:var(--text-gray); font-size:0.85rem; text-align:center;">ไม่มีรายการเงินยืม</p>';
+
+            let noteHtml = '';
+            appData.notes.forEach((n, i) => {
+                noteHtml += `
+                    <div class="list-item" style="flex-direction:column; align-items:flex-start; position:relative;">
+                        <div style="font-weight:700; color:var(--neon-cyan);">${n.title}</div>
+                        <div style="font-size:0.8rem; color:#ccc; margin-top:4px;">${n.desc}</div>
+                        <button onclick="delNote(${i})" style="position:absolute; top:8px; right:8px; background:none; border:none; color:red; cursor:pointer;">✕</button>
+                    </div>
+                `;
+            });
+            document.getElementById('notes-container').innerHTML = noteHtml || '<p style="color:var(--text-gray); font-size:0.85rem; text-align:center;">ยังไม่มีโน้ต</p>';
+
+            let initBal = Number(appData.initBalance) || 0;
+            let netBalance = initBal + inc - exp;
+            
+            document.getElementById('val-init-display').innerText = `฿${initBal.toLocaleString('th-TH', {minimumFractionDigits: 2})}`;
+            document.getElementById('val-balance').innerText = `฿${netBalance.toLocaleString('th-TH', {minimumFractionDigits: 2})}`;
+            document.getElementById('val-income').innerText = `฿${inc.toLocaleString()}`;
+            document.getElementById('val-expense').innerText = `฿${exp.toLocaleString()}`;
+            document.getElementById('val-debt').innerText = `฿${debtRemTotal.toLocaleString()}`;
+
+            let rank = "LV.1 นายท่านผู้เริ่มสะสมเงิน";
+            if (netBalance < 0) rank = "LV.0 นายท่านถังแตกขั้นวิกฤต 💀";
+            else if (netBalance > 10000) rank = "LV.MAX มหาเศรษฐีสายเปย์ 👑";
+            document.getElementById('user-rank').innerText = rank;
+        }
+
+        function addTx(e) {
+            e.preventDefault();
+            sfx(900);
+            appData.tx.unshift({
+                type: document.getElementById('tx-type').value,
+                amt: document.getElementById('tx-amount').value,
+                cat: document.getElementById('tx-category').value,
+                date: document.getElementById('tx-date').value,
+                note: document.getElementById('tx-note').value
+            });
+            saveData();
+            document.getElementById('form-tx').reset();
+            document.getElementById('tx-date').valueAsDate = new Date();
+            document.getElementById('mascot-text').innerText = "ไทกะบันทึกรายการให้นายท่านเรียบร้อยแล้วนะคะ~ ยอดเงินคำนวณใหม่แล้วค่ะ!";
+        }
+
+        function delTx(i) { appData.tx.splice(i, 1); saveData(); }
+
+        function addDebt(e) {
+            e.preventDefault();
+            sfx(900);
+            appData.debts.unshift({
+                name: document.getElementById('debt-name').value,
+                amt: document.getElementById('debt-total').value,
+                date: document.getElementById('debt-date').value,
+                note: document.getElementById('debt-note').value,
+                pay: []
+            });
+            saveData();
+            document.getElementById('form-debt').reset();
+            document.getElementById('debt-date').valueAsDate = new Date();
+            document.getElementById('debt-name').value = 'คุณแม่';
+        }
+
+        function openPayModal(i) {
+            document.getElementById('pay-debt-index').value = i;
+            openModal('modal-pay');
+        }
+
+        function submitPay() {
+            let i = document.getElementById('pay-debt-index').value;
+            let amt = document.getElementById('pay-amt').value;
+            let note = document.getElementById('pay-note').value;
+            if(!amt || amt <= 0) return alert('กรุณากรอกยอดเงินคืน!');
+            
+            appData.debts[i].pay.push({ amt, note, date: new Date().toISOString().split('T')[0] });
+            saveData();
+            closeModal('modal-pay');
+            document.getElementById('pay-amt').value = '';
+            document.getElementById('pay-note').value = '';
+        }
+
+        function delDebt(i) { if(confirm('ต้องการลบข้อมูลเงินยืมก้อนนี้?')) { appData.debts.splice(i, 1); saveData(); } }
+
+        function addNote(e) {
+            e.preventDefault();
+            sfx(700);
+            appData.notes.unshift({
+                title: document.getElementById('note-title').value,
+                desc: document.getElementById('note-desc').value
+            });
+            saveData();
+            document.getElementById('form-note').reset();
+        }
+
+        function delNote(i) { appData.notes.splice(i, 1); saveData(); }
+
+        let cVal = '0';
+        function calcIn(v) {
+            sfx(600);
+            if(cVal==='0' && !['+','-','*','/','%'].includes(v)) cVal = v;
+            else cVal += v;
+            document.getElementById('calc-screen').value = cVal;
+        }
+        function calcC() { sfx(300); cVal = '0'; document.getElementById('calc-screen').value = cVal; }
+        function calcDel() { sfx(300); cVal = cVal.length > 1 ? cVal.slice(0, -1) : '0'; document.getElementById('calc-screen').value = cVal; }
+        function calcRes() {
+            sfx(1000);
+            try {
+                cVal = String(eval(cVal));
+                document.getElementById('calc-screen').value = cVal;
+            } catch(e) {
+                document.getElementById('calc-screen').value = 'ERROR';
+                cVal = '0';
+            }
+        }
+
+        renderApp();
+    </script>
+</body>
+</html>
