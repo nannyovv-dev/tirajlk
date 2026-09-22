@@ -96,15 +96,15 @@
 
         .header-btns {
             display: flex;
-            gap: 8px;
+            gap: 6px;
         }
 
         .icon-btn {
             background: #1a1c29;
             border: 2px solid var(--neon-green);
             color: var(--neon-green);
-            width: 38px;
-            height: 38px;
+            width: 36px;
+            height: 36px;
             border-radius: 10px;
             display: flex;
             align-items: center;
@@ -556,9 +556,10 @@
         <div class="app-header">
             <div class="header-title">
                 <img src="https://i.ibb.co/QjTD7mG0/IMG-3495.jpg" alt="Akumo" class="header-avatar-mini" onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1578632767115-351597cf2477?w=100';">
-                <span>タイガ アクモ ( ไทกะ อาคุโมะ )</span>
+                <span>タイガ アクモ</span>
             </div>
             <div class="header-btns">
+                <button class="icon-btn" onclick="openModal('modal-backup')" title="สำรองข้อมูล">💾</button>
                 <button class="icon-btn" onclick="openModal('modal-calc')" title="เครื่องคิดเลข">🧮</button>
                 <button class="icon-btn" onclick="openModal('modal-guide')" title="วิธีใช้งาน">❓</button>
             </div>
@@ -742,6 +743,29 @@
         </div>
 
         <!-- MODALS -->
+        <!-- BACKUP / RESTORE MODAL -->
+        <div id="modal-backup" class="modal-overlay">
+            <div class="modal-content">
+                <div class="modal-close" onclick="closeModal('modal-backup')">✕</div>
+                <h3 style="color: var(--neon-cyan); margin-bottom: 10px;">💾 สำรอง & ดึงข้อมูลกลับ</h3>
+                <p style="font-size: 0.8rem; color: var(--text-gray); margin-bottom: 12px;">ก๊อปปี้รหัสนี้ไปเซฟใส่โน้ตมือถือไว้ ถ้าข้อมูลหาย สามารถนำรหัสมาวางดึงกลับมาได้ 100% ค่ะ!</p>
+                
+                <div class="form-group">
+                    <label>รหัสสำรองข้อมูลของคุณ:</label>
+                    <textarea id="backup-code" rows="3" readonly style="font-size: 0.75rem; font-family: monospace;"></textarea>
+                </div>
+                <button onclick="copyBackupCode()" class="btn-action green" style="margin-bottom: 15px;">📋 ก๊อปปี้รหัสสำรองข้อมูล</button>
+
+                <div style="border-top: 1px dashed #333; padding-top: 15px;">
+                    <div class="form-group">
+                        <label>วางรหัสสำรอง เพื่อดึงข้อมูลคืน:</label>
+                        <textarea id="restore-code" rows="3" placeholder="วางรหัสที่เคยสำรองไว้ที่นี่..."></textarea>
+                    </div>
+                    <button onclick="restoreBackupCode()" class="btn-action">🔄 ดึงข้อมูลกลับมา</button>
+                </div>
+            </div>
+        </div>
+
         <div id="modal-init-bal" class="modal-overlay">
             <div class="modal-content">
                 <div class="modal-close" onclick="closeModal('modal-init-bal')">✕</div>
@@ -792,7 +816,8 @@
                     <p><b>1. ตั้งค่าเงินตั้งต้น:</b> กดปุ่ม "✏️ แก้ไขเงินเริ่ม" เพื่อระบุยอดเงินที่มีจริงในบัญชี</p><br>
                     <p><b>2. ปรึกษาเจ๊ (💬 คุยกับเจ๊):</b> สามารถพิมพ์คุยหรือถามคำแนะนำการเงินกับเจ๊ได้ตลอดเวลานะคะ</p><br>
                     <p><b>3. บันทึกรายรับ-รายจ่าย (📝 บันทึก):</b> จดบันทึกทุกการใช้จ่ายพร้อมเลือกหมวดหมู่</p><br>
-                    <p><b>4. ตามเงินยืม (💀 เงินยืม):</b> ใส่ยอดเงินยืม และกดบันทึกคืนเงินทีละนิดได้จนกว่าจะครบค่ะ</p>
+                    <p><b>4. ตามเงินยืม (💀 เงินยืม):</b> ใส่ยอดเงินยืม และกดบันทึกคืนเงินทีละนิดได้จนกว่าจะครบค่ะ</p><br>
+                    <p><b>5. เซฟข้อมูล (💾 ปุ่มเซฟ):</b> กดปุ่มเซฟมุมบนขวา เพื่อก๊อปปี้รหัสสำรองไว้กันข้อมูลหายได้ค่ะ</p>
                 </div>
             </div>
         </div>
@@ -865,10 +890,37 @@
             sfx(700); 
             if(id === 'modal-init-bal') {
                 document.getElementById('init-bal-input').value = appData.initBalance || '';
+            } else if(id === 'modal-backup') {
+                document.getElementById('backup-code').value = btoa(unescape(encodeURIComponent(JSON.stringify(appData))));
             }
             document.getElementById(id).classList.add('open'); 
         }
         function closeModal(id) { sfx(300); document.getElementById(id).classList.remove('open'); }
+
+        function copyBackupCode() {
+            sfx(900);
+            let codeInput = document.getElementById('backup-code');
+            codeInput.select();
+            document.execCommand('copy');
+            alert('คัดลอกรหัสสำรองข้อมูลแล้ว! นำไปวางเก็บไว้ในแอปโน้ตได้เลยนะคะนายท่าน ♥');
+        }
+
+        function restoreBackupCode() {
+            sfx(900);
+            let code = document.getElementById('restore-code').value.trim();
+            if(!code) return alert('กรุณาใส่รหัสสำรองข้อมูลก่อนนะคะ!');
+            try {
+                let parsed = JSON.parse(decodeURIComponent(escape(atob(code))));
+                if(parsed && typeof parsed === 'object') {
+                    appData = parsed;
+                    saveData();
+                    closeModal('modal-backup');
+                    alert('ดึงข้อมูลทั้งหมดกลับมาสำเร็จแล้วค่ะนายท่าน! ♥');
+                }
+            } catch(e) {
+                alert('รหัสสำรองข้อมูลไม่ถูกต้อง กรุณาตรวจสอบอีกครั้งนะคะ!');
+            }
+        }
 
         function saveInitBalance() {
             sfx(900);
@@ -896,12 +948,10 @@
             sfx(700);
             let container = document.getElementById('chat-msgs');
             
-            // User Message
             container.innerHTML += `<div class="msg-bubble msg-user">${text}</div>`;
             input.value = '';
             container.scrollTop = container.scrollHeight;
 
-            // Akumo Reply Simulation
             setTimeout(() => {
                 sfx(900);
                 let randomReply = akumoReplies[Math.floor(Math.random() * akumoReplies.length)];
